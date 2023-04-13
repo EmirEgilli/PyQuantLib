@@ -517,7 +517,7 @@ def TFEF(ticker, start_date=None, end_date=None):
 
     def plot_corr_matrix(correlation_mat):
         plt.figure(figsize=(12.2, 4.5))
-        sns.heatmap(correlation_mat, annot = True)
+        sns.heatmap(correlation_mat, cmap = "coolwarm", annot = True)
         plt.title('Correlation Matrix', fontsize = 18)
         plt.xlabel('Stocks', fontsize = 14)
         plt.ylabel('Stocks', fontsize = 14)
