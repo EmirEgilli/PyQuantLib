@@ -615,3 +615,41 @@ def TFEF(ticker, start_date=None, end_date=None):
     cleaned_weights = ef1.clean_weights() 
     print(cleaned_weights) 
     ef1.portfolio_performance(verbose=True)
+from statsmodels.tsa.filters.hp_filter import hpfilter
+def hpfma(ticker, start=None, end=None):
+    """
+    Parameters
+    ----------
+    ticker : TYPE
+        Single ticker selected from Yahoo Finance.
+        start : TYPE, optional
+        DESCRIPTION. The default is None. "2003-01-01"
+        end : TYPE, optional
+        DESCRIPTION. The default is None. Today's date.
+
+    Returns
+    -------
+    Uses the Hodrick-Prescott filter on daily price to reduce noise
+    and 50 to 200 moving averages to check trend.
+    [Harris and Yilmaz, 2009]
+
+    """
+    ticker = ticker
+    if start == None:
+        start = "2003-01-01"
+    else:
+        start = start
+    if end == None:
+        end = date.today()
+    else:
+        end = end
+    #Download the data
+    data = yf.download(ticker, start, end)
+    #Extract trend and cyclicity using hpfilter
+    df_cycle, df_trend = hpfilter(data['Close'], lamb = 1600*3**4)
+    data['Trend'] = df_trend
+    data['MA50'] = df_trend.rolling(window=50).mean()
+    data['MA200'] = df_trend.rolling(window=200).mean()
+    data['Cycle'] = df_cycle
+    data[['Trend', 'MA50', 'MA200']].plot(figsize=(12,5)).autoscale(axis='x',tight=True)
+    data[['Cycle']].plot(figsize=(12,5)).autoscale(axis='x',tight=True)
