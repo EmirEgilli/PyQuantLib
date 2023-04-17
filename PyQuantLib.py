@@ -651,5 +651,5 @@ def hpfma(ticker, start=None, end=None):
     data['MA50'] = df_trend.rolling(window=50).mean()
     data['MA200'] = df_trend.rolling(window=200).mean()
     data['Cycle'] = df_cycle
-    data[['Trend', 'MA50', 'MA200']].plot(figsize=(12,5)).autoscale(axis='x',tight=True)
-    data[['Cycle']].plot(figsize=(12,5)).autoscale(axis='x',tight=True)
+    trend = data[['Trend', 'MA50', 'MA200']].plot(figsize=(12,5)).autoscale(axis='x',tight=True)
+    cycle = data[['Cycle']].plot(figsize=(12,2)).autoscale(axis='x',tight=True)
