@@ -108,6 +108,10 @@ def MonteCarlo(ticker, start=None, end=None):
         end = date.today()
     else:
         end = end
+    if decimal == None:
+        decimal = 2
+    else:
+        decimal = decimal
     
     stock_data = yf.download(ticker, start, end)
 
@@ -152,9 +156,9 @@ def MonteCarlo(ticker, start=None, end=None):
     handles = [mpl_patches.Rectangle((0, 0), 1, 1, fc="white", ec="white", lw=0,
                                       alpha=0)]*3
     labels = []
-    labels.append("Expected Price: ${}".format(round(np.mean(last_price_list),2)))
-    labels.append("Quantile (5%): {}".format(round(np.percentile(last_price_list, 5),2)))
-    labels.append("Quantile (95%): {}".format(round(np.percentile(last_price_list, 95),2)))             
+    labels.append("Expected Price: ${}".format(round(np.mean(last_price_list),decimal)))
+    labels.append("Quantile (5%): {}".format(round(np.percentile(last_price_list, 5),decimal)))
+    labels.append("Quantile (95%): {}".format(round(np.percentile(last_price_list, 95),decimal)))             
 
     plt.hist(last_price_list, bins=100)
     plt.suptitle("Histogram: {}".format(ticker))
