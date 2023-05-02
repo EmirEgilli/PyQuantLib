@@ -83,7 +83,7 @@ def StocksAnalyze(ticker, start = None, end = None):
     plt.show()
     sns.reset_orig()
     
-def MonteCarlo(ticker, start=None, end=None):
+def MonteCarlo(ticker, start=None, end=None, decimal=None):
     """
     Parameters
     ----------
