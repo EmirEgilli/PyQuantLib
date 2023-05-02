@@ -93,6 +93,8 @@ def MonteCarlo(ticker, start=None, end=None, decimal=None):
         Start Date. The default is None. "2020-01-01"
     end : TYPE, optional
         End Date. The default is None. Today's date.
+    decimal : INT, optional
+        Digits after decimal point. The default is None for 2 decimals. 
 
     Returns
     -------
