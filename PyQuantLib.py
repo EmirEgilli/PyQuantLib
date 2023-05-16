@@ -377,7 +377,7 @@ def CAPM(ticker, start_date=None, end_date=None, market=None):
     end : TYPE, optional
         DESCRIPTION. The default is None. Today's date.
     market : TYPE, optional
-        DESCRIPTIN. The default is None for "US". Can also be selected as "TR".
+        DESCRIPTION. The default is None for "US". Can also be selected as "TR".
 
     Returns
     -------
