@@ -366,7 +366,7 @@ def markowitz(ticker, start_date=None, end_date=None):
     print_optimal_portfolio(optimum, log_daily_returns)
     show_optimal_portfolio(optimum, log_daily_returns, means, risks)
  
-def CAPM(ticker, start_date=None, end_date=None):
+def CAPM(ticker, start_date=None, end_date=None, market=None):
     """
     Parameters
     ----------
@@ -376,6 +376,8 @@ def CAPM(ticker, start_date=None, end_date=None):
         DESCRIPTION. The default is None. "2021-01-01"
     end : TYPE, optional
         DESCRIPTION. The default is None. Today's date.
+    market : TYPE, optional
+        DESCRIPTIN. The default is None for "US". Can also be selected as "TR".
 
     Returns
     -------
@@ -452,12 +454,17 @@ def CAPM(ticker, start_date=None, end_date=None):
         plt.grid(True)
         plt.show()
        
-
     
-    RISK_FREE_RATE = yf.Ticker("^TNX").fast_info['last_price'] / 100
+    if market == None or market == "US":
+        RISK_FREE_RATE = yf.Ticker("^TNX").fast_info['last_price'] / 100
+
+    if market == "TR":
+        RISK_FREE_RATE = pd.read_html("https://www.bloomberght.com/tahvil/tr-10-yillik-tahvil")[0]['SON'][10] / 10000
+        
+    RISK_FREE_RATE = RISK_FREE_RATE    
     MONTHS_IN_YEAR = 12
     calculate_beta()
-    regression()   
+    regression()
     
 def TFEF(ticker, start_date=None, end_date=None):
     """
