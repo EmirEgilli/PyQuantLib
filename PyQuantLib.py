@@ -14,11 +14,24 @@ from datetime import date
 import warnings
 warnings.filterwarnings("ignore")
 
-def StocksAnalyze(ticker, start = None, end = None):
+def StocksAnalyze(ticker, start = None, end = None, market = None):
     """
-    Enter the tickers to download the data from yfinance,
+    Parameters
+    ----------
+    ticker : TYPE
+        Single or multiple tickers selected from Yahoo Finance.
+    start : TYPE, optional
+        DESCRIPTION. The default is None. "2018-01-01"
+    end : TYPE, optional
+        DESCRIPTION. The default is None. Today's date.
+    market : TYPE, optional
+        DESCRIPTION. The defalut is None. Set to US or TR market.
+
+    Returns
+    -------
     will plot the percentage movements and risk/return, return the correlation matrix,
-    along with the chart for the Sharpe Ratio of portfolio.    
+    along with the chart for the Sharpe Ratio of portfolio.  
+    
     """
     ticker = ticker
     if start == None:
@@ -74,7 +87,10 @@ def StocksAnalyze(ticker, start = None, end = None):
     plt.show()
 
     N = 255
-    rf = yf.Ticker("^TNX").fast_info['last_price'] / 100
+    if market == None or market == "US":
+        rf = yf.Ticker("^TNX").fast_info['last_price'] / 100
+    if market == "TR":
+        rf = pd.read_html("https://www.bloomberght.com/tahvil/tr-10-yillik-tahvil")[0]['SON'][10] / 10000
     sr_mean =norm.mean()*N-rf
     sr_sigma = norm.std()*np.sqrt(255)
     sharpe_ratio = sr_mean / sr_sigma / 100
