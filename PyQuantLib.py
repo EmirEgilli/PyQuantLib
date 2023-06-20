@@ -696,7 +696,9 @@ def PortSharpe(ticker_weights, start = None, end = None, market = None):
     sr_sigma = port_returns.std()*np.sqrt(255)
     sharpe_ratio = sr_mean / sr_sigma
     
-    print('Sharpe Ratio for Portfolio:', sharpe_ratio.round(2))
+    print(' Sharpe Ratio for Portfolio:', sharpe_ratio.round(2), "\n",
+         'Annual Volatility:', (sr_sigma*100).round(2),'%', "\n",
+         'Expected Annual Returns:', (sr_mean*100).round(2),'%')
     
 from statsmodels.tsa.filters.hp_filter import hpfilter
 def hpfma(ticker, start=None, end=None):
