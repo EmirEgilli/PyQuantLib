@@ -480,7 +480,7 @@ def CAPM(ticker, start_date=None, end_date=None, market=None):
     RISK_FREE_RATE = RISK_FREE_RATE    
     MONTHS_IN_YEAR = 12
     calculate_beta()
-    regression()
+    regression()   
     
 def TFEF(ticker, start_date=None, end_date=None):
     """
@@ -644,6 +644,60 @@ def TFEF(ticker, start_date=None, end_date=None):
     cleaned_weights = ef1.clean_weights() 
     print(cleaned_weights) 
     ef1.portfolio_performance(verbose=True)
+    
+def PortSharpe(ticker_weights, start = None, end = None, market = None):
+    """
+    Parameters
+    ----------
+    ticker_weights : TYPE
+        Define a dictionary of tickers and weights.
+    start : TYPE, optional
+        DESCRIPTION. The default is None. "2018-01-01"
+    end : TYPE, optional
+        DESCRIPTION. The default is None. Today's date.
+    market : TYPE, optional
+        DESCRIPTION. The defalut is None. Set to US or TR market.   
+
+    Returns
+    -------
+    Will calculate the Sharpe of a portfolio based on given weights. 
+    """
+        
+    if start == None:
+        start = "2018-01-01"
+    else:
+        start = start
+    if end == None:
+        end = date.today()
+    else:
+        end = end
+        
+    if market == None or market == "US":
+        rf = yf.Ticker("^TNX").fast_info['last_price'] / 100
+    if market == "TR":
+        rf = pd.read_html("https://www.bloomberght.com/tahvil/tr-10-yillik-tahvil")[0]['SON'][10] / 10000
+    
+    # Obtain the tickers and weights from the ticker_weights dictionary
+    tickers = list(ticker_weights.keys())
+    weights = np.array(list(ticker_weights.values()))
+    
+    # Download the historical data
+    data = yf.download(tickers, start, end)
+    
+    # Calculate daily returns
+    close = data['Adj Close']
+    daily_rets = close.pct_change()
+    
+    # Calculate portfolio's returns
+    port_returns = daily_rets.dot(weights)
+       
+    # Calculate Sharpe ratio
+    sr_mean = port_returns.mean()*255-rf
+    sr_sigma = port_returns.std()*np.sqrt(255)
+    sharpe_ratio = sr_mean / sr_sigma
+    
+    print('Sharpe Ratio for Portfolio:', sharpe_ratio.round(2))
+    
 from statsmodels.tsa.filters.hp_filter import hpfilter
 def hpfma(ticker, start=None, end=None):
     """
