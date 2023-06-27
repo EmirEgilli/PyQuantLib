@@ -660,7 +660,8 @@ def PortSharpe(ticker_weights, start = None, end = None, market = None):
 
     Returns
     -------
-    Will calculate the Sharpe of a portfolio based on given weights. 
+    Will calculate the Sharpe of a portfolio based on given weights.
+    Then will create a pie chart.
     """
         
     if start == None:
@@ -699,6 +700,19 @@ def PortSharpe(ticker_weights, start = None, end = None, market = None):
     print(' Sharpe Ratio for Portfolio:', sharpe_ratio.round(2), "\n",
          'Annual Volatility:', (sr_sigma*100).round(2),'%', "\n",
          'Expected Annual Returns:', (sr_mean*100).round(2),'%')
+    
+    # Data for the pie chart
+    labels = ticker_weights.keys()
+    sizes = ticker_weights.values()
+
+    # Plotting the pie chart
+    plt.pie(sizes, labels=labels, autopct='%1.1f%%')
+
+    # Aspect ratio ensures that pie is drawn as a circle
+    plt.axis('equal')
+
+    # Display the chart
+    plt.show()
     
 from statsmodels.tsa.filters.hp_filter import hpfilter
 def hpfma(ticker, start=None, end=None):
