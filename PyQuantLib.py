@@ -792,3 +792,53 @@ def garch(ticker, start = None, end = None):
     # Plot the standardized residuals
     results.plot(annualize='D')
     plt.show()
+
+def PortGarch(ticker_weights, start = None, end = None):
+    """
+    Parameters
+    ----------
+    ticker_weights : TYPE
+        Define a dictionary of tickers and weights.
+    start : TYPE, optional
+        DESCRIPTION. The default is None. "2018-01-01"
+    end : TYPE, optional
+        DESCRIPTION. The default is None. Today's date.
+    market : TYPE, optional
+        DESCRIPTION. The defalut is None. Set to US or TR market.   
+
+    Returns
+    -------
+    Will calculate and plot the GARCH for a portfolio based on given weights.
+    """
+        
+    if start == None:
+        start = "2018-01-01"
+    else:
+        start = start
+    if end == None:
+        end = date.today()
+    else:
+        end = end
+        
+    # Obtain the tickers and weights from the ticker_weights dictionary
+    tickers = list(ticker_weights.keys())
+    weights = np.array(list(ticker_weights.values()))
+    
+    # Download the historical data
+    data = yf.download(tickers, start, end)
+    
+    # Calculate daily returns
+    close = data['Adj Close']
+    daily_rets = close.pct_change().dropna()
+    
+    # Calculate portfolio's returns
+    port_returns = daily_rets.dot(weights)
+    
+    # Create a GARCH model and fit to data
+    model = arch.arch_model(port_returns, vol='GARCH', p=1, q=1, rescale=False)
+    results = model.fit()
+    print(results.summary())
+    
+    # Plot the standardized residuals
+    results.plot(annualize='D')
+    plt.show()
