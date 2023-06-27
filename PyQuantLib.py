@@ -739,3 +739,42 @@ def hpfma(ticker, start=None, end=None):
     
     data[['Trend', 'MA50', 'MA200']].plot(figsize=(12,5)).autoscale(axis='x',tight=True)
     data[['Cycle']].plot(figsize=(12,2)).autoscale(axis='x',tight=True)
+
+import arch
+def garch(ticker, start = None, end = None):
+    """
+    Parameters
+    ----------
+    ticker : TYPE
+        Single ticker selected from Yahoo Finance.
+    start : TYPE, optional
+        Start Date. The default is None. "2021-01-01"
+    end : TYPE, optional
+        End Date. The default is None. Today's date.
+
+    Returns
+    -------
+    Performs and plots the GARCH (Generalized Autoregressive Conditional Heteroskedasticity) model
+    on a single ticker from Yahoo Finance.
+
+    """
+    ticker = ticker
+    if start == None:
+        start = '2021-01-01'
+    else:
+        start = start
+    if end == None:
+        end = date.today()
+    else:
+        end = end
+        
+    Returns = yf.download(ticker, start, end)['Adj Close'].pct_change().dropna()
+    
+    # Create a GARCH model and fit to data
+    model = arch.arch_model(Returns, vol='GARCH', p=1, q=1, rescale=False)
+    results = model.fit()
+    print(results.summary())
+    
+    # Plot the standardized residuals
+    results.plot(annualize='D')
+    plt.show()
