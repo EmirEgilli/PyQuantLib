@@ -905,4 +905,6 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
     W2 = (W1 * calculate_beta(stock1, index = index, start = start, end = end)
             /calculate_beta(stock2, index = index, start = start, end = end) 
             * stock1/stock2)[-1].round(2)
-    print(f"Weight for the short stock {s2} is: {W2}")
+    cum_ret = (stock1_n[-1] - stock2_n[-1]).round(2)
+    print(f"Weight for the short stock {s2}: {W2} \n",
+          f"Cumulative return: %{cum_ret}")
