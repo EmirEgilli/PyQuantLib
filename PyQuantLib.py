@@ -842,3 +842,55 @@ def PortGarch(ticker_weights, start = None, end = None):
     # Plot the standardized residuals
     results.plot(annualize='D')
     plt.show()
+
+def beta_hedge(stock1, W1, stock2, index, start = None, end = None):   
+    """
+    Parameters
+    ----------
+    stock1 : TYPE
+        Single ticker for the stock in Long position.
+    W1 : INT
+        Weight of the stock in Long position.
+    stock2 : TYPE
+        Single ticker for the stock to be used to hedge as a Short position.
+    index : TYPE
+        Index to calculate the beta.
+    start : TYPE, optional
+        Start Date. The default is None. "2020-01-01"
+    end : TYPE, optional
+        End Date. The default is None. Today's date.
+
+    Returns
+    -------
+    Will calculate the weight for the second stock to be used as a short position to hedge the beta of first stock.
+    """
+        
+    if start == None:
+        start = "2020-01-01"
+    else:
+        start = start
+    if end == None:
+        end = date.today()
+    else:
+        end = end
+    
+    stock1 = yf.download(stock1, start, end)['Close']
+    stock2 = yf.download(stock2, start, end)['Close']
+    index = yf.download(index, start, end)['Close']
+    
+    def calculate_beta(stock, index = index, start = start, end = end):
+        stock_returns = stock.pct_change()[1:]
+        index_returns = index.pct_change()[1:]
+    
+        data = pd.concat([stock_returns, index_returns], axis = 1)
+        data.columns = ['Stock Returns', 'Index Returns']
+    
+        cov_matrix = data.cov()
+    
+        beta = cov_matrix.iloc[0, 1] / cov_matrix.iloc[1, 1]
+    
+        return beta
+    
+    return (W1 * calculate_beta(stock1, index = index, start = start, end = end)
+            /calculate_beta(stock2, index = index, start = start, end = end) 
+            * stock1/stock2)[-1]    
