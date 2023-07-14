@@ -843,7 +843,8 @@ def PortGarch(ticker_weights, start = None, end = None):
     results.plot(annualize='D')
     plt.show()
 
-def beta_hedge(s1, W1, s2, index, start = None, end = None):   
+def beta_hedge(s1, W1, s2, index, start = None, end = None):
+        
     """
     Parameters
     ----------
@@ -880,12 +881,18 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
     
     stock1_n = stock1.div(stock1.iloc[0]).mul(100)
     stock2_n = stock2.div(stock2.iloc[0]).mul(100)
+    cum_ret = (stock1_n - stock2_n)
     
-    stock1_n.plot(kind = 'line', label=s1)
-    stock2_n.plot(kind = 'line', label=s2)
-    plt.title('Percentage Change')
-    plt.axhline(y=100, color='red', linestyle='--')
-    plt.legend(fontsize=8)
+    fig, ax = plt.subplots(2, 1, figsize=(8,6), gridspec_kw={'height_ratios': [2, 1]})
+    ax[0].plot(stock1_n, label=s1)
+    ax[0].plot(stock2_n, label=s2)
+    ax[0].set_title('Percentage Change')
+    ax[0].axhline(y=100, color='red', linestyle='--')
+    ax[0].legend(fontsize=8)
+    
+    ax[1].plot(cum_ret, label = 'Portfolio', color = 'green')
+    ax[1].set_title('Portfolio Performance')
+    plt.tight_layout()
     plt.show()
     
     def calculate_beta(stock, index = index, start = start, end = end):
@@ -904,6 +911,6 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
     W2 = (W1 * calculate_beta(stock1, index = index, start = start, end = end)
             /calculate_beta(stock2, index = index, start = start, end = end) 
             * stock1/stock2)[-1].round(2)
-    cum_ret = (stock1_n[-1] - stock2_n[-1]).round(2)
+
     print(f"Weight for the short stock {s2}: {W2} \n",
-          f"Cumulative return: %{cum_ret}")
+          f"Cumulative return: %{cum_ret[-1].round(2)}")
