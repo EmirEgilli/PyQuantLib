@@ -843,7 +843,7 @@ def PortGarch(ticker_weights, start = None, end = None):
     results.plot(annualize='D')
     plt.show()
 
-def beta_hedge(stock1, W1, stock2, index, start = None, end = None):
+def beta_hedge(s1, W1, s2, index, start = None, end = None):
         
     """
     Parameters
@@ -875,17 +875,18 @@ def beta_hedge(stock1, W1, stock2, index, start = None, end = None):
     else:
         end = end
     
-    stock1 = yf.download(stock1, start, end)['Close']
-    stock2 = yf.download(stock2, start, end)['Close']
+    stock1 = yf.download(s1, start, end)['Close']
+    stock2 = yf.download(s2, start, end)['Close']
     index = yf.download(index, start, end)['Close']
     
     stock1_n = stock1.div(stock1.iloc[0]).mul(100)
     stock2_n = stock2.div(stock2.iloc[0]).mul(100)
     
-    stock1_n.plot(kind = 'line')
-    stock2_n.plot(kind = 'line')
+    stock1_n.plot(kind = 'line', label=s1)
+    stock2_n.plot(kind = 'line', label=s2)
     plt.title('Percentage Change')
     plt.axhline(y=100, color='red', linestyle='--')
+    plt.legend(fontsize=8)
     plt.show()
     
     def calculate_beta(stock, index = index, start = start, end = end):
@@ -901,6 +902,7 @@ def beta_hedge(stock1, W1, stock2, index, start = None, end = None):
     
         return beta
     
-    return (W1 * calculate_beta(stock1, index = index, start = start, end = end)
+    W2 = (W1 * calculate_beta(stock1, index = index, start = start, end = end)
             /calculate_beta(stock2, index = index, start = start, end = end) 
-            * stock1/stock2)[-1]  
+            * stock1/stock2)[-1].round(2)
+    print(f"Weight for the short stock {s2} is: {W2}")
