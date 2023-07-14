@@ -843,8 +843,7 @@ def PortGarch(ticker_weights, start = None, end = None):
     results.plot(annualize='D')
     plt.show()
 
-def beta_hedge(s1, W1, s2, index, start = None, end = None):
-        
+def beta_hedge(s1, W1, s2, index, start = None, end = None):   
     """
     Parameters
     ----------
