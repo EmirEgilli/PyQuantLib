@@ -882,9 +882,9 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
     stock2 = yf.download(s2, start, end)['Close']
     index = yf.download(index, start, end)['Close']
     
-    stock1_n = stock1.div(stock1.iloc[0]).mul(100)
-    stock2_n = stock2.div(stock2.iloc[0]).mul(100)
-    cum_ret = (stock1_n - stock2_n)
+   stock1_n = (stock1.div(stock1.iloc[0]).mul(100) - 100)
+    stock2_n = (stock2.div(stock2.iloc[0]).mul(100) - 100)
+    cum_ret = stock1_n - stock2_n
     
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing= 0.05, row_heights=[2,1])
 
@@ -896,9 +896,9 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
     fig.add_shape(
         type="line",
         x0=stock1_n.index[0],
-        y0=100,
+        y0=0,
         x1=stock1_n.index[-1],
-        y1=100,
+        y1=0,
         line=dict(color="red", dash="dash")
     )
 
