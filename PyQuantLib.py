@@ -843,7 +843,11 @@ def PortGarch(ticker_weights, start = None, end = None):
     results.plot(annualize='D')
     plt.show()
 
-def beta_hedge(s1, W1, s2, index, start = None, end = None):   
+import plotly.graph_objs as go
+from plotly.subplots import make_subplots
+    
+def beta_hedge(s1, W1, s2, index, start = None, end = None):
+        
     """
     Parameters
     ----------
@@ -882,17 +886,30 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
     stock2_n = stock2.div(stock2.iloc[0]).mul(100)
     cum_ret = (stock1_n - stock2_n)
     
-    fig, ax = plt.subplots(2, 1, figsize=(8,6), gridspec_kw={'height_ratios': [2, 1]})
-    ax[0].plot(stock1_n, label=s1)
-    ax[0].plot(stock2_n, label=s2)
-    ax[0].set_title('Percentage Change')
-    ax[0].axhline(y=100, color='red', linestyle='--')
-    ax[0].legend(fontsize=8)
-    
-    ax[1].plot(cum_ret, label = 'Portfolio', color = 'green')
-    ax[1].set_title('Portfolio Performance')
-    plt.tight_layout()
-    plt.show()
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing= 0.05, row_heights=[2,1])
+
+    fig.add_trace(go.Scatter(x=stock1_n.index, y=stock1_n.round(2), name=s1), row=1, col=1)
+    fig.add_trace(go.Scatter(x=stock2_n.index, y=stock2_n.round(2), name=s2), row=1, col=1)
+
+    fig.update_layout(title='Percentage Change')
+
+    fig.add_shape(
+        type="line",
+        x0=stock1_n.index[0],
+        y0=100,
+        x1=stock1_n.index[-1],
+        y1=100,
+        line=dict(color="red", dash="dash")
+    )
+
+    fig.update_xaxes(title_text='Time', row=2, col=1)
+    fig.update_yaxes(title_text='% Returns', row=1, col=1, title_standoff=20)
+
+    fig.add_trace(go.Scatter(x=cum_ret.index, y=cum_ret.round(2), name='Portfolio', line=dict(color='green')), row=2, col=1)
+
+    fig.update_layout(title='Portfolio Performance', height=600, width=800, template='plotly_dark', hovermode = "x")
+
+    fig.show()
     
     def calculate_beta(stock, index = index, start = start, end = end):
         stock_returns = stock.pct_change()[1:]
@@ -910,6 +927,9 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
     W2 = (W1 * calculate_beta(stock1, index = index, start = start, end = end)
             /calculate_beta(stock2, index = index, start = start, end = end) 
             * stock1/stock2)[-1].round(2)
+
+    print(f"Weight for the short stock {s2}: {W2} \n",
+          f"Cumulative return: %{cum_ret[-1].round(2)}")
 
     print(f"Weight for the short stock {s2}: {W2} \n",
           f"Cumulative return: %{cum_ret[-1].round(2)}")
