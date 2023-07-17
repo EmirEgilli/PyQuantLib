@@ -459,7 +459,7 @@ def CAPM(ticker, start_date=None, end_date=None, market=None):
         plot_regression(data, alpha, beta)
     
     def plot_regression(data, alpha,beta):
-        fig, axis = plt.subplots(1, figsize=(10,5))
+        fig, axis = plt.subplots(1, figsize=(8,5))
         axis.scatter(data['m_returns'], data['s_returns'], label='Data Points')
         axis.plot(data['m_returns'], beta * data['m_returns'] + alpha, color='red', label="CAPM Line")
         plt.title("Capital Asset Pricing Model")
