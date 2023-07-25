@@ -847,8 +847,7 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from datetime import datetime, timedelta
 
-def beta_hedge(s1, W1, s2, index, start = None, end = None):
-        
+def beta_hedge(s1, W1, s2, index, start = None, end = None):  
     """
     Parameters
     ----------
