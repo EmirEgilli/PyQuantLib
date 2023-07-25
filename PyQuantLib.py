@@ -845,7 +845,8 @@ def PortGarch(ticker_weights, start = None, end = None):
 
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
-    
+from datetime import datetime, timedelta
+
 def beta_hedge(s1, W1, s2, index, start = None, end = None):
         
     """
@@ -882,7 +883,7 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
     stock2 = yf.download(s2, start, end)['Close']
     index = yf.download(index, start, end)['Close']
     
-   stock1_n = (stock1.div(stock1.iloc[0]).mul(100) - 100)
+    stock1_n = (stock1.div(stock1.iloc[0]).mul(100) - 100)
     stock2_n = (stock2.div(stock2.iloc[0]).mul(100) - 100)
     cum_ret = stock1_n - stock2_n
     
@@ -924,6 +925,18 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
     
         return beta
     
+    def market_days(start = start, end = end):
+        start = datetime.strptime(start, "%Y-%m-%d").date()
+        end = end
+        mdays = 0
+        current_date = start
+        
+        while current_date <= end:
+            if current_date.weekday() < 5:
+                mdays += 1
+            current_date += timedelta(days=1)
+        return mdays
+    
     W2 = (W1 * calculate_beta(stock1, index = index, start = start, end = end)
             /calculate_beta(stock2, index = index, start = start, end = end) 
             * stock1/stock2)[-1].round(2)
@@ -931,6 +944,7 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
     print(" Beta Hedge Optimization Results \n",
           "-------------------------------------------- \n",
           f"Range of Timeframe: {start} - {end} \n",
+          f"Market Days: {market_days(start, end)} \n",
           "-------------------------------------------- \n",
           f"Weight for the long stock {s1}: {W1} \n",
           f"Weight for the short stock {s2}: {W2} \n",
