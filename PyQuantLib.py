@@ -133,7 +133,7 @@ def MonteCarlo(ticker, start=None, end=None, decimal=None):
     
     stock_data = yf.download(ticker, start, end)
     
-    last_price = stock_data["Close"][-1]
+    current_price = yf.Ticker(ticker).fast_info['lastPrice']
     returns = stock_data["Adj Close"].pct_change()
     daily_vol = returns.std()
 
@@ -175,7 +175,7 @@ def MonteCarlo(ticker, start=None, end=None, decimal=None):
     handles = [mpl_patches.Rectangle((0, 0), 1, 1, fc="white", ec="white", lw=0,
                                       alpha=0)]*4
     labels = []
-    labels.append("Last Price: ${}".format(round(last_price,decimal)))
+    labels.append("Last Price: ${}".format(round(current_price,decimal)))
     labels.append("Expected Price: ${}".format(round(np.mean(last_price_list),decimal)))
     labels.append("Quantile (5%): {}".format(round(np.percentile(last_price_list, 5),decimal)))
     labels.append("Quantile (95%): {}".format(round(np.percentile(last_price_list, 95),decimal)))             
