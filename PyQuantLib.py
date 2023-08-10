@@ -879,15 +879,18 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
         end = date.today()
     else:
         end = end
-    
+
+    # Download the data for the long, short and index
     stock1 = yf.download(s1, start, end)['Close']
     stock2 = yf.download(s2, start, end)['Close']
     index = yf.download(index, start, end)['Close']
-    
+
+    # Calculate percentage change and cumulative returns
     stock1_n = (stock1.div(stock1.iloc[0]).mul(100) - 100)
     stock2_n = (stock2.div(stock2.iloc[0]).mul(100) - 100)
     cum_ret = stock1_n - stock2_n
-    
+
+    # Plot the chart
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing= 0.05, row_heights=[2,1])
 
     fig.add_trace(go.Scatter(x=stock1_n.index, y=stock1_n.round(2), name=s1), row=1, col=1)
@@ -895,6 +898,7 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
 
     fig.update_layout(title='Percentage Change')
 
+    # Red horizontal line for the zero range
     fig.add_shape(
         type="line",
         x0=stock1_n.index[0],
@@ -907,12 +911,15 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
     fig.update_xaxes(title_text='Time', row=2, col=1)
     fig.update_yaxes(title_text='% Returns', row=1, col=1, title_standoff=20)
 
+    # Returns as a subplot, with green line
     fig.add_trace(go.Scatter(x=cum_ret.index, y=cum_ret.round(2), name='Portfolio', line=dict(color='green')), row=2, col=1)
 
+    # Dark theme
     fig.update_layout(title='Portfolio Performance', height=600, width=800, template='plotly_dark', hovermode = "x")
 
     fig.show()
-    
+
+    # Function to calculate beta
     def calculate_beta(stock, index = index, start = start, end = end):
         stock_returns = stock.pct_change()[1:]
         index_returns = index.pct_change()[1:]
@@ -925,7 +932,8 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
         beta = cov_matrix.iloc[0, 1] / cov_matrix.iloc[1, 1]
     
         return beta
-    
+
+    # Function to calculate market days
     def market_days(start = start, end = end):
         start = datetime.strptime(start, "%Y-%m-%d").date()
         end = end
@@ -937,11 +945,13 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
                 mdays += 1
             current_date += timedelta(days=1)
         return mdays
-    
+
+    # Calculate the weight of the short stock based on the formula
     W2 = (W1 * calculate_beta(stock1, index = index, start = start, end = end)
             /calculate_beta(stock2, index = index, start = start, end = end) 
             * stock1/stock2)[-1].round(2)
 
+    # Comments on chart
     print(" Beta Hedge Optimization Results \n",
           "-------------------------------------------- \n",
           f"Range of Timeframe: {start} - {end} \n",
