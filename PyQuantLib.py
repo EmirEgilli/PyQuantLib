@@ -961,7 +961,7 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
           f"Weight for the short stock {s2}: {W2} \n",
           f"Cumulative return: {cum_ret[-1].round(2)}%")
     
-    def Seasonality(ticker, start=None, end=None):
+def Seasonality(ticker, start=None, end=None):
     """
     Parameters
     ----------
