@@ -1034,7 +1034,7 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
 
     # Set plot title and axis labels
     fig.update_layout(
-        title=f'Monthly Cumulative Returns : {ticker}',
+        title=f'Seasonal Chart : {ticker}',
         xaxis=dict(title='Month'),
         yaxis=dict(title='Return %'),
         template='plotly_dark'
