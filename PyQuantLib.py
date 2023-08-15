@@ -960,3 +960,97 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
           f"Weight for the long stock {s1}: {W1} \n",
           f"Weight for the short stock {s2}: {W2} \n",
           f"Cumulative return: {cum_ret[-1].round(2)}%")
+    
+    def Seasonality(ticker, start=None, end=None):
+    """
+    Parameters
+    ----------
+    ticker : TYPE
+        Single ticker selected from Yahoo Finance.
+    start : TYPE, optional
+        Start Date. The default is None. "2021-01-01"
+    end : TYPE, optional
+        End Date. The default is None. Today's date.
+
+    Returns
+    -------
+    Calculates the monthly returns and plots the seasonality chart.
+
+    """
+    if start == None:
+        start = "2020-01-01"
+    else:
+        start = start
+    if end == None:
+        end = date.today()
+    else:
+        end = end
+        
+    price = yf.download(ticker, start, end)
+    df = pd.DataFrame({'return': price['Close'].pct_change().fillna(0)})
+
+    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    df = df[df.index >= df[df.index.month == 1].index[0]]
+    df = df[df.index <= df[df.index.month == 12].index[-1]]
+    
+    # Seasonal data
+    seasonal_data = {}
+    for year in df.index.year.unique():
+        seasonal_data[year] = df[df.index.year == year].reset_index()['return']
+    seasonal_data = pd.DataFrame(seasonal_data)
+    
+   # Monthly Cumulative Returns
+    year_long = seasonal_data[-1:].T.dropna().index[0]
+    seasonal_data.index = df[df.index.year == year_long].index.strftime('%Y%m')
+    seasonal_returns = seasonal_data.dropna(how='all').groupby(seasonal_data.index).cumsum()
+    seasonal_returns.reset_index(drop=True, inplace=True)
+    seasonal_returns = seasonal_returns.dropna(how='all').mean(axis=1) 
+    
+    # Monthly Data Summary
+    monthly = {}
+    for year in df.index.year.unique():
+        yeardf = df[df.index.year == year]
+        monthly[year] = yeardf.groupby(yeardf.index.month).sum() * 100
+
+    data = pd.concat(monthly, axis=1)
+    data.columns = [col[0] for col in data.columns]
+    data.index = months
+
+    summary = pd.DataFrame(data.mean(axis=1))
+    summary.columns = ['Return %']
+    
+    # Create a line plot using plotly.graph_objs
+    fig = go.Figure()
+
+    # Add a line trace for the summary data
+    fig.add_trace(go.Scatter(
+        x=summary.index,
+        y=summary['Return %'].round(2),
+        mode='lines+markers',
+        name='Monthly Returns',
+        line=dict(color='green'),
+        marker=dict(size=8, color='green')
+    ))
+
+    # Set plot title and axis labels
+    fig.update_layout(
+        title=f'Monthly Cumulative Returns : {ticker}',
+        xaxis=dict(title='Month'),
+        yaxis=dict(title='Return %'),
+        template='plotly_dark'
+    )
+
+    fig.add_shape(
+        type="line",
+        x0=summary.index[0],
+        y0=0,
+        x1=summary.index[-1],
+        y1=0,
+        line=dict(color="red", dash="dash")
+    )
+
+    # Show the plot
+    fig.show()
+    
+    data_df = pd.DataFrame(data.T)
+    return data_df
