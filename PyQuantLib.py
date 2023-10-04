@@ -1054,3 +1054,63 @@ def Seasonality(ticker, start=None, end=None):
     
     data_df = pd.DataFrame(data.T)
     return data_df
+
+def dollarspread(start, end=None):
+    """
+    Parameters
+    ----------
+    start : TYPE
+        Start Date.
+    end : TYPE, optional
+        End Date. The default is None. Today's date.
+
+    Returns
+    -------
+    Calculates and plots the spread between and dollar index and dollar futures.
+
+    """
+    if end is None:
+        end = date.today()
+
+    # Download both the dollar index and futures
+    index = yf.download("DX-Y.NYB", start, end)
+    futures = yf.download("DX=F", start, end)
+
+    # Check if the dataframes are empty
+    if index.empty or futures.empty:
+        print("Error: Data not available.")
+        return
+
+    # Create subplots with shared x-axis
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
+                        subplot_titles=['Dollar Index vs Dollar Futures', 'Spread between Dollar Index and Dollar Futures'],
+                        row_heights=[2, 1],  # Adjust the row heights
+                        vertical_spacing=0.05)  # Adjust the vertical spacing
+
+    # Plot Dollar Index and Futures prices
+    trace_index = go.Scatter(x=index.index, y=index['Close'], mode='lines', name='Dollar Index')
+    trace_futures = go.Scatter(x=futures.index, y=futures['Close'], mode='lines', name='Dollar Futures')
+
+    fig.add_trace(trace_index, row=1, col=1)
+    fig.add_trace(trace_futures, row=1, col=1)
+
+    # Set subplot title and axis labels
+    fig.update_yaxes(title_text='Price', row=1, col=1)
+
+    # Calculate and plot the spread between dollar index and futures
+    spread = index['Close'] - futures['Close']
+    trace_spread = go.Scatter(x=spread.index, y=spread, mode='lines', name='Spread')
+    zero_line = go.Scatter(x=spread.index, y=[0] * len(spread), mode='lines', name='Zero Spread', line=dict(dash='dash'))
+
+    fig.add_trace(trace_spread, row=2, col=1)
+    fig.add_trace(zero_line, row=2, col=1)
+
+    # Set subplot title and axis labels for the spread plot
+    fig.update_xaxes(title_text='Date', row=2, col=1)
+    fig.update_yaxes(title_text='Spread', row=2, col=1)
+
+    # Update layout for better display
+    fig.update_layout(height=600, width=800, title_text='Dollar Index and Futures Interactive Subplots', template='plotly_dark')
+
+    # Show interactive plot
+    fig.show()
