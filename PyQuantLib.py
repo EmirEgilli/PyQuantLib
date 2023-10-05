@@ -18,20 +18,20 @@ def StocksAnalyze(ticker, start = None, end = None, market = None):
     """
     Parameters
     ----------
-    ticker : TYPE
-        Single or multiple tickers selected from Yahoo Finance.
-    start : TYPE, optional
-        DESCRIPTION. The default is None. "2018-01-01"
-    end : TYPE, optional
-        DESCRIPTION. The default is None. Today's date.
-    market : TYPE, optional
-        DESCRIPTION. The defalut is None. Set to US or TR market.
+    tickers : str
+        Single or multiple tickers selected from Yahoo Finance, separated by spaces.
+    start_date : str, optional
+        Start Date. The default is None, and if not provided, it defaults to '2018-01-01'.
+    end_date : str, optional
+        End Date. The default is None, and if not provided, it defaults to today's date.
+    market : str, optional
+        Market identifier. The default is None. Set to US or TR market.
 
     Returns
     -------
-    will plot the percentage movements and risk/return, return the correlation matrix,
-    along with the chart for the Sharpe Ratio of portfolio.  
-    
+    None
+        Will plot the percentage movements and risk/return, return the correlation matrix,
+        along with the chart for the Sharpe Ratio of the portfolio.
     """
     ticker = ticker
     if start == None:
@@ -103,19 +103,19 @@ def MonteCarlo(ticker, start=None, end=None, decimal=None):
     """
     Parameters
     ----------
-    ticker : TYPE
+    ticker : str
         Single ticker selected from Yahoo Finance.
-    start : TYPE, optional
-        Start Date. The default is None. "2020-01-01"
-    end : TYPE, optional
-        End Date. The default is None. Today's date.
-    decimal : INT, optional
-        Digits after decimal point. The default is None for 2 decimals. 
+    start_date : str, optional
+        Start Date. The default is None, and if not provided, it defaults to '2020-01-01'.
+    end_date : str, optional
+        End Date. The default is None, and if not provided, it defaults to today's date.
+    decimal_places : int, optional
+        Digits after the decimal point. The default is None for 2 decimal places.
 
     Returns
     -------
-    Performs Monte Carlo simulation on single ticker from Yahoo Finance.
-
+    None
+        Performs Monte Carlo simulation on a single ticker from Yahoo Finance.
     """
     ticker = ticker
     if start == None:
@@ -192,17 +192,17 @@ def VaR(ticker, start=None, end=None):
     """
     Parameters
     ----------
-    ticker : TYPE
+    ticker : str
         Single ticker selected from Yahoo Finance.
-    start : TYPE, optional
-        Start Date. The default is None. "2021-01-01"
-    end : TYPE, optional
-        End Date. The default is None. Today's date.
+    start_date : str, optional
+        Start Date. The default is None, and if not provided, it defaults to '2021-01-01'.
+    end_date : str, optional
+        End Date. The default is None, and if not provided, it defaults to today's date.
 
     Returns
     -------
-    Performs Value at Risk(VaR) on a single ticker from Yahoo Finance.
-
+    None
+        Performs Value at Risk (VaR) on a single ticker from Yahoo Finance.
     """
     ticker = ticker
     if start == None:
@@ -237,18 +237,18 @@ def markowitz(ticker, start_date=None, end_date=None):
     """
     Parameters
     ----------
-    ticker : TYPE
-        Single or multiple tickers selected from Yahoo Finance.
-    start : TYPE, optional
-        DESCRIPTION. The default is None. "2021-01-01"
-    end : TYPE, optional
-        DESCRIPTION. The default is None. Today's date.
+    tickers : str
+        Single or multiple tickers selected from Yahoo Finance, separated by spaces.
+    start_date : str, optional
+        Start Date. The default is None, and if not provided, it defaults to '2021-01-01'.
+    end_date : str, optional
+        End Date. The default is None, and if not provided, it defaults to today's date.
 
     Returns
     -------
-    Creates Efficient Frontier based on tickers selected from Yahoo Finance.
-    Only for Call options.
-    
+    None
+        Creates an Efficient Frontier based on tickers selected from Yahoo Finance.
+        Only for Call options.
     """
     # on average there are 252 trading days in a year
     NUM_TRADING_DAYS = 252
@@ -388,20 +388,20 @@ def CAPM(ticker, start_date=None, end_date=None, market=None):
     """
     Parameters
     ----------
-    ticker : TYPE
-        Single or multiple tickers selected from Yahoo Finance.
-    start : TYPE, optional
-        DESCRIPTION. The default is None. "2021-01-01"
-    end : TYPE, optional
-        DESCRIPTION. The default is None. Today's date.
-    market : TYPE, optional
-        DESCRIPTION. The default is None for "US". Can also be selected as "TR".
+    ticker : str
+        Single or multiple tickers selected from Yahoo Finance, separated by spaces.
+    start_date : str, optional
+        Start Date. The default is None, and if not provided, it defaults to '2021-01-01'.
+    end_date : str, optional
+        End Date. The default is None, and if not provided, it defaults to today's date.
+    market : str, optional
+        Market identifier. The default is "US". It can also be selected as "TR".
 
     Returns
     -------
-    Plots the Capital Asset Pricing Model(CAPM).
-    Based on both the formula and linear regression.
-    
+    None
+        Plots the Capital Asset Pricing Model (CAPM).
+        Based on both the formula and linear regression.
     """
     
     ticker = ticker
@@ -477,7 +477,7 @@ def CAPM(ticker, start_date=None, end_date=None, market=None):
         RISK_FREE_RATE = yf.Ticker("^TNX").fast_info['last_price'] / 100
 
     if market == "TR":
-        RISK_FREE_RATE = pd.read_html("https://www.bloomberght.com/tahvil/tr-10-yillik-tahvil")[0]['SON'][10] / 10000
+        RISK_FREE_RATE = pd.read_html("https://www.bloomberght.com/tahvil/tr-10-yillik-tahvil")[0]['%'][10] / 10000
         
     RISK_FREE_RATE = RISK_FREE_RATE    
     MONTHS_IN_YEAR = 12
@@ -488,19 +488,19 @@ def TFEF(ticker, start_date=None, end_date=None):
     """
     Parameters
     ----------
-    ticker : TYPE
-        Single or multiple tickers selected from Yahoo Finance.
-    start : TYPE, optional
-        DESCRIPTION. The default is None. "2021-01-01"
-    end : TYPE, optional
-        DESCRIPTION. The default is None. Today's date.
+    tickers : str
+        Single or multiple tickers selected from Yahoo Finance, separated by spaces.
+    start_date : str, optional
+        Start Date. The default is None, and if not provided, it defaults to '2021-01-01'.
+    end_date : str, optional
+        End Date. The default is None, and if not provided, it defaults to today's date.
 
     Returns
     -------
-    Plots the Two-Funds Efficient Frontier.
-    Two different optimizations for 20% and 28% returns.
-    Available for both call and put options.
-    
+    None
+        Plots the Two-Funds Efficient Frontier.
+        Two different optimizations for 20% and 28% returns.
+        Available for both call and put options.
     """
     ticker = ticker
     ticker = "".join(str(ticker).split(','))
@@ -651,19 +651,20 @@ def PortSharpe(ticker_weights, start = None, end = None, market = None):
     """
     Parameters
     ----------
-    ticker_weights : TYPE
-        Define a dictionary of tickers and weights.
-    start : TYPE, optional
-        DESCRIPTION. The default is None. "2018-01-01"
-    end : TYPE, optional
-        DESCRIPTION. The default is None. Today's date.
-    market : TYPE, optional
-        DESCRIPTION. The defalut is None. Set to US or TR market.   
+    ticker_weights : dict
+        Dictionary of tickers and their corresponding weights in the portfolio.
+    start : str, optional
+        Start Date. The default is None, and if not provided, it defaults to '2018-01-01'.
+    end : str, optional
+        End Date. The default is None, and if not provided, it defaults to today's date.
+    market : str, optional
+        Market identifier. Set to 'US' or 'TR'. The default is None.
 
     Returns
     -------
-    Will calculate the Sharpe of a portfolio based on given weights.
-    Then will create a pie chart.
+    None
+        Calculates the Sharpe ratio of a portfolio based on given weights.
+        Then creates a pie chart.
     """
         
     if start == None:
@@ -721,19 +722,19 @@ def hpfma(ticker, start=None, end=None):
     """
     Parameters
     ----------
-    ticker : TYPE
+    ticker : str
         Single ticker selected from Yahoo Finance.
-        start : TYPE, optional
-        DESCRIPTION. The default is None. "2003-01-01"
-        end : TYPE, optional
-        DESCRIPTION. The default is None. Today's date.
+    start : str, optional
+        Start Date. The default is None, and if not provided, it defaults to '2003-01-01'.
+    end : str, optional
+        End Date. The default is None, and if not provided, it defaults to today's date.
 
     Returns
     -------
-    Uses the Hodrick-Prescott filter on daily price to reduce noise
-    and 50 to 200 moving averages to check trend.
-    [Harris and Yilmaz, 2009]
-
+    None
+        Uses the Hodrick-Prescott filter on daily price to reduce noise
+        and 50 to 200 moving averages to check trend.
+        [Harris and Yilmaz, 2009]
     """
     ticker = ticker
     if start == None:
@@ -755,24 +756,24 @@ def hpfma(ticker, start=None, end=None):
     
     data[['Trend', 'MA50', 'MA200']].plot(figsize=(12,5)).autoscale(axis='x',tight=True)
     data[['Cycle']].plot(figsize=(12,2)).autoscale(axis='x',tight=True)
-
+    
 import arch
 def garch(ticker, start = None, end = None):
     """
     Parameters
     ----------
-    ticker : TYPE
+    ticker : str
         Single ticker selected from Yahoo Finance.
-    start : TYPE, optional
-        Start Date. The default is None. "2021-01-01"
-    end : TYPE, optional
-        End Date. The default is None. Today's date.
+    start : str, optional
+        Start Date. The default is None, and if not provided, it defaults to '2021-01-01'.
+    end : str, optional
+        End Date. The default is None, and if not provided, it defaults to today's date.
 
     Returns
     -------
-    Performs and plots the GARCH (Generalized Autoregressive Conditional Heteroskedasticity) model
-    on a single ticker from Yahoo Finance.
-
+    None
+        Performs and plots the GARCH (Generalized Autoregressive Conditional Heteroskedasticity) model
+        on a single ticker from Yahoo Finance.
     """
     ticker = ticker
     if start == None:
@@ -794,23 +795,24 @@ def garch(ticker, start = None, end = None):
     # Plot the standardized residuals
     results.plot(annualize='D')
     plt.show()
-
+    
 def PortGarch(ticker_weights, start = None, end = None):
     """
     Parameters
     ----------
-    ticker_weights : TYPE
-        Define a dictionary of tickers and weights.
-    start : TYPE, optional
-        DESCRIPTION. The default is None. "2018-01-01"
-    end : TYPE, optional
-        DESCRIPTION. The default is None. Today's date.
-    market : TYPE, optional
-        DESCRIPTION. The defalut is None. Set to US or TR market.   
+    ticker_weights : dict
+        Dictionary of tickers and their corresponding weights in the portfolio.
+    start : str, optional
+        Start Date. The default is None, and if not provided, it defaults to "2018-01-01".
+    end : str, optional
+        End Date. The default is None, and if not provided, it defaults to today's date.
+    market : str, optional
+        Market identifier. Set to 'US' or 'TR'. The default is None.
 
     Returns
     -------
-    Will calculate and plot the GARCH for a portfolio based on given weights.
+    None
+        Calculates and plots the GARCH for a portfolio based on given weights.
     """
         
     if start == None:
@@ -848,27 +850,28 @@ def PortGarch(ticker_weights, start = None, end = None):
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 from datetime import datetime, timedelta
-
-def beta_hedge(s1, W1, s2, index, start = None, end = None):  
+    
+def beta_hedge(s1, W1, s2, index, start = None, end = None):    
     """
     Parameters
     ----------
-    stock1 : TYPE
-        Single ticker for the stock in Long position.
-    W1 : INT
+    s1 : str
+        Ticker for the stock in Long position.
+    W1 : float
         Weight of the stock in Long position.
-    stock2 : TYPE
-        Single ticker for the stock to be used to hedge as a Short position.
-    index : TYPE
-        Index to calculate the beta.
-    start : TYPE, optional
-        Start Date. The default is None. "2020-01-01"
-    end : TYPE, optional
-        End Date. The default is None. Today's date.
+    s2 : str
+        Ticker for the stock to be used to hedge as a Short position.
+    index : str
+        Ticker for the index to calculate the beta.
+    start : str, optional
+        Start Date. The default is None, and if not provided, it defaults to "2020-01-01".
+    end : str, optional
+        End Date. The default is None, and if not provided, it defaults to today's date.
 
     Returns
     -------
-    Will calculate the weight for the second stock to be used as a short position to hedge the beta of first stock.
+    None
+        Calculates the weight for the second stock to be used as a short position to hedge the beta of the first stock.
     """
         
     if start == None:
@@ -879,18 +882,15 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
         end = date.today()
     else:
         end = end
-
-    # Download the data for the long, short and index
+    
     stock1 = yf.download(s1, start, end)['Close']
     stock2 = yf.download(s2, start, end)['Close']
     index = yf.download(index, start, end)['Close']
-
-    # Calculate percentage change and cumulative returns
+    
     stock1_n = (stock1.div(stock1.iloc[0]).mul(100) - 100)
     stock2_n = (stock2.div(stock2.iloc[0]).mul(100) - 100)
     cum_ret = stock1_n - stock2_n
-
-    # Plot the chart
+    
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing= 0.05, row_heights=[2,1])
 
     fig.add_trace(go.Scatter(x=stock1_n.index, y=stock1_n.round(2), name=s1), row=1, col=1)
@@ -898,7 +898,6 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
 
     fig.update_layout(title='Percentage Change')
 
-    # Red horizontal line for the zero range
     fig.add_shape(
         type="line",
         x0=stock1_n.index[0],
@@ -911,15 +910,12 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
     fig.update_xaxes(title_text='Time', row=2, col=1)
     fig.update_yaxes(title_text='% Returns', row=1, col=1, title_standoff=20)
 
-    # Returns as a subplot, with green line
     fig.add_trace(go.Scatter(x=cum_ret.index, y=cum_ret.round(2), name='Portfolio', line=dict(color='green')), row=2, col=1)
 
-    # Dark theme
     fig.update_layout(title='Portfolio Performance', height=600, width=800, template='plotly_dark', hovermode = "x")
 
     fig.show()
-
-    # Function to calculate beta
+    
     def calculate_beta(stock, index = index, start = start, end = end):
         stock_returns = stock.pct_change()[1:]
         index_returns = index.pct_change()[1:]
@@ -932,8 +928,7 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
         beta = cov_matrix.iloc[0, 1] / cov_matrix.iloc[1, 1]
     
         return beta
-
-    # Function to calculate market days
+    
     def market_days(start = start, end = end):
         start = datetime.strptime(start, "%Y-%m-%d").date()
         end = end
@@ -945,13 +940,11 @@ def beta_hedge(s1, W1, s2, index, start = None, end = None):
                 mdays += 1
             current_date += timedelta(days=1)
         return mdays
-
-    # Calculate the weight of the short stock based on the formula
+    
     W2 = (W1 * calculate_beta(stock1, index = index, start = start, end = end)
             /calculate_beta(stock2, index = index, start = start, end = end) 
             * stock1/stock2)[-1].round(2)
 
-    # Comments on chart
     print(" Beta Hedge Optimization Results \n",
           "-------------------------------------------- \n",
           f"Range of Timeframe: {start} - {end} \n",
@@ -965,15 +958,18 @@ def Seasonality(ticker, start=None, end=None):
     """
     Parameters
     ----------
-    ticker : TYPE
+    ticker : str
         Single ticker selected from Yahoo Finance.
-    start : TYPE, optional
-        Start Date. The default is None. "2021-01-01"
-    end : TYPE, optional
-        End Date. The default is None. Today's date.
+    start : str or None, optional
+        Start Date. The default is None, and if not provided, it defaults to "2020-01-01".
+    end : str or None, optional
+        End Date. The default is None, and if not provided, it defaults to today's date.
 
     Returns
     -------
+    pd.DataFrame
+        Returns a DataFrame containing monthly data summary.
+
     Calculates the monthly returns and plots the seasonality chart.
 
     """
@@ -1059,14 +1055,17 @@ def dollarspread(start, end=None):
     """
     Parameters
     ----------
-    start : TYPE
-        Start Date.
-    end : TYPE, optional
-        End Date. The default is None. Today's date.
+    start : str or datetime
+        Start date for fetching data.
+
+    end : str or datetime, optional
+        End date for fetching data. If not provided, the default is set to today's date.
 
     Returns
     -------
-    Calculates and plots the spread between and dollar index and dollar futures.
+    None
+
+    Calculates and plots the spread between the Dollar Index and Dollar Futures.
 
     """
     if end is None:
