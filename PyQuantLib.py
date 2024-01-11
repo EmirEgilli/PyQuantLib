@@ -457,7 +457,7 @@ def CAPM(ticker, start_date=None, end_date=None, market=None):
         print("Beta from regression: ", beta)
         expected_return = RISK_FREE_RATE + beta * (data['m_returns'].mean() * MONTHS_IN_YEAR - RISK_FREE_RATE)
       
-        print("Expected Return: ", expected_return)
+        print("Expected Return(Intercept): ", expected_return)
         plot_regression(data, alpha, beta)
     
     def plot_regression(data, alpha,beta):
@@ -471,18 +471,22 @@ def CAPM(ticker, start_date=None, end_date=None, market=None):
         plt.legend()
         plt.grid(True)
         plt.show()
+        
+    def get_risk_free_rate(start_date, end_date, market):
+        if market == "US":
+            tnx_data = yf.download("^TNX", start=start_date, end=end_date)
+            avg_yield = tnx_data['Close'].mean() / 100
+        elif market == "TR":
+            avg_yield = pd.read_html("https://www.bloomberght.com/tahvil/tr-10-yillik-tahvil")[0]['%'][10] / 10000
+        else:
+            raise ValueError("Invalid market identifier")
+        return avg_yield
        
     
-    if market == None or market == "US":
-        RISK_FREE_RATE = yf.Ticker("^TNX").fast_info['last_price'] / 100
-
-    if market == "TR":
-        RISK_FREE_RATE = pd.read_html("https://www.bloomberght.com/tahvil/tr-10-yillik-tahvil")[0]['%'][10] / 10000
-        
-    RISK_FREE_RATE = RISK_FREE_RATE    
+    RISK_FREE_RATE = get_risk_free_rate(start_date, end_date, market if market else "US")   
     MONTHS_IN_YEAR = 12
     calculate_beta()
-    regression()   
+    regression()  
     
 def TFEF(ticker, start_date=None, end_date=None):
     """
