@@ -440,9 +440,7 @@ def CAPM(ticker, start_date=None, end_date=None, market=None):
         return data
     
     def calculate_beta():
-        #covariance matrix: the diagonal items are the variances
-        #off diagonals are the covariances
-        #the matrix is symmetric: cov[0,1] = cov[1,0] !!!
+        
         data = initialize()
         covariance_matrix = np.cov(data['s_returns'], data['m_returns'])
         #calculate beta based on the formula
