@@ -6,6 +6,7 @@ import yfinance as yf
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpl_patches
 import scipy.optimize as optimization
+from scipy.stats import norm
 
 import seaborn as sns
 
@@ -1115,3 +1116,103 @@ def dollarspread(start, end=None):
 
     # Show interactive plot
     fig.show()
+
+def BlackScholes(r, S, K, T, sigma, option_type="C", div=0):
+    """
+Calculate the price of a European Call or Put option using the Black-Scholes formula, including adjustments for continuous dividend yield.
+
+Parameters
+----------
+r : float
+    Risk-free interest rate, expressed as a decimal (e.g., 0.05 for 5%).
+S : float
+    Current stock price.
+K : float
+    Strike price of the option.
+T : float
+    Time to expiration of the option, expressed in years (e.g., 0.5 for six months).
+sigma : float
+    Volatility of the underlying stock, expressed as a decimal.
+option_type : str, optional
+    Type of the option: 'C' for Call option or 'P' for Put option. The default is 'C'.
+div : float, optional
+    Continuous dividend yield of the underlying stock, expressed as a decimal. The default is 0.
+
+Returns
+-------
+None
+    This function prints the option price, Delta, Gamma, Vega, Theta, and Rho for the specified Call or Put option.
+    - Option Price: The theoretical price of the option using the Black-Scholes formula.
+    - Delta: Measures the rate of change of the option's price with respect to changes in the underlying asset's price.
+    - Gamma: Measures the rate of change in Delta with respect to changes in the underlying asset's price.
+    - Vega: Measures sensitivity of the option's price to changes in the volatility of the underlying asset. Note that Vega is not a Greek letter; the symbol ν (nu) is sometimes used.
+    - Theta: Measures the rate of time decay of the option's price, expressed per day. Used 252 trading days.
+    - Rho: Measures sensitivity of the option's price to changes in the risk-free interest rate.
+
+Note
+----
+This function assumes European options, which can only be exercised at expiration. It does not apply to American options, which can be exercised at any time before expiration.
+----
+"""
+    
+    # Define d1 and d2 for Black-Scholes, including the dividend yield
+    d1 = (np.log(S / K) + (r - div + sigma ** 2 / 2) * T) / (sigma * np.sqrt(T))
+    d2 = d1 - sigma * np.sqrt(T)
+    
+    # Subfunction to calculate delta
+    def calc_delta():
+        if option_type == "C":
+            return norm.cdf(d1, 0, 1)  # Delta for Call option
+        elif option_type == "P":
+            return -norm.cdf(-d1, 0, 1)  # Delta for Put option
+        
+    # Subfunction to calculate Gamma
+    def calc_gamma():
+        return norm.pdf(d1, 0, 1) / (S * sigma * np.sqrt(T))
+    
+    # Subfunction to calculate Vega
+    def calc_vega():
+        return (S * norm.pdf(d1, 0, 1) * np.sqrt(T)) * 0.01
+    
+    # Subfunction to calculate Theta, including dividend yield
+    def calc_theta():
+        if option_type == "C":
+            return (-S * norm.pdf(d1, 0, 1) * sigma / (2 * np.sqrt(T)) + div * S * norm.cdf(d1, 0, 1) - r * K * np.exp(-r * T) * norm.cdf(d2, 0, 1)) / 252 # Theta for Call option
+        elif option_type == "P":
+            return (-S * norm.pdf(d1, 0, 1) * sigma / (2 * np.sqrt(T)) - div * S * norm.cdf(-d1, 0, 1) + r * K * np.exp(-r * T) * norm.cdf(-d2, 0, 1)) / 252 # Theta for Put option
+
+    # Subfunction to calculate Rho
+    def calc_rho():
+        if option_type == "C":
+            return (K * T * np.exp(-r * T) * norm.cdf(d2, 0, 1)) * 0.01  # Rho for Call option
+        elif option_type == "P":
+            return (-K * T * np.exp(-r * T) * norm.cdf(-d2, 0, 1)) * 0.01  # Rho for Put option
+
+    try:
+        delta = calc_delta()  # Call the subfunction to calculate delta
+        gamma = calc_gamma()  # Call the subfunction to calculate gamma
+        vega = calc_vega()    # Call the subfunction to calculate vega
+        theta = calc_theta()  # Call the subfunction to calculate theta
+        rho = calc_rho()      # Call the subfunction to calculate rho
+        if option_type == "C":
+            price = S * np.exp(-div * T) * norm.cdf(d1, 0, 1) - K * np.exp(-r * T) * norm.cdf(d2, 0, 1)
+            print(f"Call Option Price: {price:.2f}")
+            print("-----------------")
+            print(f"Call Delta: {delta:.2f}")
+            print(f"Gamma: {gamma:.2f}")
+            print(f"Vega: {vega:.2f}")
+            print(f"Call Theta: {theta:.2f}")
+            print(f"Call Rho: {rho:.2f}")
+        elif option_type == "P":
+            price = K * np.exp(-r * T) * norm.cdf(-d2, 0, 1) - S * np.exp(-div * T) * norm.cdf(-d1, 0, 1)
+            print(f"Put Option Price: {price:.2f}")
+            print("-----------------")
+            print(f"Put Delta: {delta:.2f}")
+            print(f"Gamma: {gamma:.2f}")
+            print(f"Vega: {vega:.2f}")
+            print(f"Put Theta: {theta:.2f}")
+            print(f"Put Rho: {rho:.2f}")
+        else:
+            raise ValueError("Invalid option type! Please confirm option type either 'C' for Call option or 'P' for Put option")
+    except ValueError as e:
+        print(e)
