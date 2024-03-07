@@ -249,7 +249,7 @@ def markowitz(ticker, start_date=None, end_date=None):
     -------
     None
         Creates an Efficient Frontier based on tickers selected from Yahoo Finance.
-        Only for Call options.
+        Only for Long direction.
     """
     # on average there are 252 trading days in a year
     NUM_TRADING_DAYS = 252
@@ -503,7 +503,7 @@ def TFEF(ticker, start_date=None, end_date=None):
     None
         Plots the Two-Funds Efficient Frontier.
         Two different optimizations for 20% and 28% returns.
-        Available for both call and put options.
+        Available for both Long and Short positions.
     """
     ticker = ticker
     ticker = "".join(str(ticker).split(','))
